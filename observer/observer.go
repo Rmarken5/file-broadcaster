@@ -20,6 +20,7 @@ func (c *ConnectionData) OnUpdate(files []string) error {
 		fmt.Printf("Unable to write %s to %s", fileString, c.Address)
 		return fmt.Errorf("error %v: ", err)
 	}
+	fmt.Println("File String written.")
 	return nil
 }
 
