@@ -2,28 +2,41 @@ package main
 
 import (
 	"fmt"
-	"github.com/Rmarken5/file-broadcaster/observer"
 	file_listener "github.com/Rmarken5/file-broadcaster/file-listener"
+	"github.com/Rmarken5/file-broadcaster/observer"
+	"github.com/fsnotify/fsnotify"
 	"math/rand"
 	"net"
+	"os"
 	"time"
 )
 
 type server struct {
 	FileListener file_listener.FileListener
-	FileSubject observer.FileBroadcastSubject
+	FileSubject  observer.FileBroadcastSubject
 }
 
 func main() {
 	s := server{
 		FileListener: file_listener.FileListener{},
 		FileSubject: observer.FileBroadcastSubject{
-			Files: []string{"file1", "file2", "file3", "file4"},
+			Files:     []string{},
 			Observers: make(map[string]observer.Observer, 0),
-
 		},
 	}
-	s.acceptClients()
+	done := make(chan bool)
+	directory := "/home/ryanm/programming/go/file-broadcaster/dummy"
+	go s.acceptClients()
+	s.addFilesToSubject(directory)
+	go s.listenForFiles(directory)
+
+	for {
+		select {
+			case <- done:
+				os.Exit(1)
+		}
+	}
+	//
 
 }
 
@@ -58,19 +71,41 @@ func (s *server) handleConnection(c net.Conn) {
 	s.FileSubject.Subscribe(obs)
 }
 
-func (s *server) listenForFiles() {
-	eventChannel, err := s.FileListener.ListenForFiles("/home/ryanm/programming/go/file-broadcaster/dummy")
+func (s *server) listenForFiles(directory string) {
+	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
+		panic(err.Error())
+	}
+	defer watcher.Close()
+
+	if err = watcher.Add(directory); err != nil {
 		panic(err)
 	}
+	done :=  make(chan bool)
+
 	go func() {
+		fmt.Println("listening for files.")
 		for {
 			select {
 			// watch for events
-			case event := <-*eventChannel:
-				fmt.Printf("EVENT! %#v\n", event)
-
+			case event := <-watcher.Events:
+				fmt.Printf("EVENT! %+v\n", event)
+				if event.Op.String() == "CREATE" {
+					s.FileSubject.AddFiles(event.Name)
+				} else if event.Op.String() == "REMOVE" {
+					s.FileSubject.RemoveFiles(event.Name)
+				}
 			}
 		}
 	}()
+	<- done
+}
+
+func (s *server) addFilesToSubject(directory string)  {
+	files, err := s.FileListener.ReadDirectory(directory)
+
+	if err != nil {
+		panic(err)
+	}
+	s.FileSubject.Files = append(s.FileSubject.Files, files...)
 }
