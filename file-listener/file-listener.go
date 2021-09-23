@@ -22,7 +22,7 @@ type FileListener struct {
 
 }*/
 
-func (f *FileListener) ReadDirectory(directory string) ([]string, error)  {
+func (f *FileListener) ReadDirectory(directory string) ([]string, error) {
 	files := []string{}
 	dirEntries, err := os.ReadDir(directory)
 	if err != nil {
@@ -30,8 +30,8 @@ func (f *FileListener) ReadDirectory(directory string) ([]string, error)  {
 	}
 
 	for _, entry := range dirEntries {
-		if !entry.IsDir(){
-			files = append(files, directory+"/"+entry.Name())
+		if !entry.IsDir() {
+			files = append(files, entry.Name())
 		}
 	}
 	return files, nil

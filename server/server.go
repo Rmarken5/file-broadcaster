@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	file_listener "github.com/Rmarken5/file-broadcaster/file-listener"
 	"github.com/Rmarken5/file-broadcaster/observer"
@@ -8,6 +9,7 @@ import (
 	"math/rand"
 	"net"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -15,8 +17,11 @@ type server struct {
 	FileListener file_listener.FileListener
 	FileSubject  observer.FileBroadcastSubject
 }
-
+ var directory = flag.String("directory", "", "Directory to listen to files on.")
 func main() {
+
+	flag.Parse()
+
 	s := server{
 		FileListener: file_listener.FileListener{},
 		FileSubject: observer.FileBroadcastSubject{
@@ -25,18 +30,17 @@ func main() {
 		},
 	}
 	done := make(chan bool)
-	directory := "/home/ryanm/programming/go/file-broadcaster/dummy"
+	//directory := "/home/ryanm/programming/go/file-broadcaster/dummy"
 	go s.acceptClients()
-	s.addFilesToSubject(directory)
-	go s.listenForFiles(directory)
+	s.addFilesToSubject(*directory)
+	go s.listenForFiles(*directory)
 
 	for {
 		select {
-			case <- done:
-				os.Exit(1)
+		case <-done:
+			os.Exit(1)
 		}
 	}
-	//
 
 }
 
@@ -81,7 +85,7 @@ func (s *server) listenForFiles(directory string) {
 	if err = watcher.Add(directory); err != nil {
 		panic(err)
 	}
-	done :=  make(chan bool)
+	done := make(chan bool)
 
 	go func() {
 		fmt.Println("listening for files.")
@@ -90,18 +94,20 @@ func (s *server) listenForFiles(directory string) {
 			// watch for events
 			case event := <-watcher.Events:
 				fmt.Printf("EVENT! %+v\n", event)
+				fileParts := strings.Split(event.Name, "/")
+				fileName := fileParts[len(fileParts)-1]
 				if event.Op.String() == "CREATE" {
-					s.FileSubject.AddFiles(event.Name)
+					s.FileSubject.AddFiles(fileName)
 				} else if event.Op.String() == "REMOVE" {
-					s.FileSubject.RemoveFiles(event.Name)
+					s.FileSubject.RemoveFiles(fileName)
 				}
 			}
 		}
 	}()
-	<- done
+	<-done
 }
 
-func (s *server) addFilesToSubject(directory string)  {
+func (s *server) addFilesToSubject(directory string) {
 	files, err := s.FileListener.ReadDirectory(directory)
 
 	if err != nil {
