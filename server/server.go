@@ -5,7 +5,6 @@ import (
 	"fmt"
 	file_listener "github.com/Rmarken5/file-broadcaster/file-listener"
 	"github.com/Rmarken5/file-broadcaster/observer"
-	"github.com/fsnotify/fsnotify"
 	"math/rand"
 	"net"
 	"os"
@@ -75,8 +74,8 @@ func (s *server) handleConnection(c net.Conn) {
 	s.FileSubject.Subscribe(obs)
 }
 
-func (s *server) listenForFiles(directory string) {
-	watcher, err := fsnotify.NewWatcher()
+func (s *server) listenForFiles(directory string) error{
+/*	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		panic(err.Error())
 	}
@@ -84,15 +83,20 @@ func (s *server) listenForFiles(directory string) {
 
 	if err = watcher.Add(directory); err != nil {
 		panic(err)
+	}*/
+	fileListener, err := s.FileListener.ListenForFiles(directory)
+	if err != nil {
+		return err
 	}
+	fmt.Println("listening for files.")
+
 	done := make(chan bool)
 
 	go func() {
-		fmt.Println("listening for files.")
 		for {
 			select {
 			// watch for events
-			case event := <-watcher.Events:
+			case event := <- fileListener:
 				fmt.Printf("EVENT! %+v\n", event)
 				fileParts := strings.Split(event.Name, "/")
 				fileName := fileParts[len(fileParts)-1]
@@ -105,6 +109,7 @@ func (s *server) listenForFiles(directory string) {
 		}
 	}()
 	<-done
+	return nil
 }
 
 func (s *server) addFilesToSubject(directory string) {

@@ -2,25 +2,26 @@ package file_listener
 
 import (
 	"fmt"
+	"github.com/fsnotify/fsnotify"
 	"os"
 )
 
 type FileListener struct {
 }
 
-/*func (f *FileListener) ListenForFiles(directory string) (chan fsnotify.Event, error) {
+func (f *FileListener) ListenForFiles(directory string) (chan fsnotify.Event, error) {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		return nil, err
 	}
-	defer watcher.Close()
+	//defer watcher.Close()
 
 	if err = watcher.Add(directory); err != nil {
 		return nil, err
 	}
 	return watcher.Events, nil
 
-}*/
+}
 
 func (f *FileListener) ReadDirectory(directory string) ([]string, error) {
 	files := []string{}
