@@ -38,12 +38,13 @@ func (f *FileBroadcastSubject) Subscribe(observer Observer) {
 
 func (f *FileBroadcastSubject) Unsubscribe(key string) {
 	delete(f.Observers, key)
+	fmt.Printf("%s has closed their connection.\n", key)
 }
 
 func (f *FileBroadcastSubject) NotifyAll() {
 	for _, obs := range f.Observers {
 		if err := obs.OnUpdate(f.Files); err != nil {
-			fmt.Println("Connection closed for: ", obs.GetIdentifier())
+			fmt.Printf("Connection closed for: %s\n", obs.GetIdentifier())
 			f.Unsubscribe(obs.GetIdentifier())
 		}
 	}
