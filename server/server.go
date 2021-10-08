@@ -75,15 +75,7 @@ func (s *server) handleConnection(c net.Conn) {
 }
 
 func (s *server) listenForFiles(directory string) error{
-/*	watcher, err := fsnotify.NewWatcher()
-	if err != nil {
-		panic(err.Error())
-	}
-	defer watcher.Close()
 
-	if err = watcher.Add(directory); err != nil {
-		panic(err)
-	}*/
 	fileListener, err := s.FileListener.ListenForFiles(directory)
 	if err != nil {
 		return err
