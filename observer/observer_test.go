@@ -2,12 +2,12 @@ package observer
 
 import (
 	"fmt"
-	mocks "github.com/Rmarken5/file-broadcaster/mocks"
+	"github.com/Rmarken5/file-broadcaster/mocks"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
-//go:generate mockgen -destination=../mocks/mock_conn.go net Conn
+//go:generate mockgen -destination=../mocks/mock_conn.go --package=mocks net Conn
 func TestConnectionData_OnUpdate_Nil(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()

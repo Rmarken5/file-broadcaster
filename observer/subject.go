@@ -20,7 +20,7 @@ func (f *FileBroadcastSubject) AddFiles(fileName string) {
 	}
 }
 func (f *FileBroadcastSubject) RemoveFiles(fileName string) {
-	var newFileArr []string
+	newFileArr := f.Files
 	for i, file := range f.Files {
 		if fileName == file {
 			newFileArr = append(f.Files[:i], f.Files[i+1:]...)
