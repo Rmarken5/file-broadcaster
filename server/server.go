@@ -88,10 +88,7 @@ func (s *server) handleConnection(c net.Conn) {
 
 func (s *server) listenForFiles(directory string) error{
 
-	fileListener, err := s.FileListener.ListenForFiles(directory)
-	if err != nil {
-		return err
-	}
+	fileListener := s.FileListener.ListenForFiles(directory)
 	fmt.Println("listening for files.")
 
 	done := make(chan bool)
@@ -117,10 +114,7 @@ func (s *server) listenForFiles(directory string) error{
 }
 
 func (s *server) addFilesToSubject(dirEntries []os.DirEntry) {
-	files, err := s.FileListener.ReadDirectory(dirEntries)
+	files := s.FileListener.ReadDirectory(dirEntries)
 
-	if err != nil {
-		panic(err)
-	}
 	s.FileSubject.Files = append(s.FileSubject.Files, files...)
 }
