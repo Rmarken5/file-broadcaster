@@ -2,7 +2,7 @@ package observer
 
 import (
 	"errors"
-	mocks "github.com/Rmarken5/file-broadcaster/mocks"
+	"github.com/Rmarken5/file-broadcaster/mocks"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"testing"

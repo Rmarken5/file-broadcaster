@@ -5,6 +5,7 @@ import (
 	"fmt"
 	file_listener "github.com/Rmarken5/file-broadcaster/file-listener"
 	"github.com/Rmarken5/file-broadcaster/observer"
+	"github.com/fsnotify/fsnotify"
 	"math/rand"
 	"net"
 	"os"
@@ -21,8 +22,19 @@ func main() {
 
 	flag.Parse()
 
+	watcher, err := fsnotify.NewWatcher()
+
+	if err != nil {
+		panic(err)
+	}
+	dirEntries, err := os.ReadDir(*directory)
+	if err != nil {
+		panic(err)
+	}
 	s := server{
-		FileListener: file_listener.FileListener{},
+		FileListener: file_listener.FileListener{
+			Watcher: watcher,
+		},
 		FileSubject: observer.FileBroadcastSubject{
 			Files:     []string{},
 			Observers: make(map[string]observer.Observer, 0),
@@ -31,7 +43,7 @@ func main() {
 	done := make(chan bool)
 	//directory := "/home/ryanm/programming/go/file-broadcaster/dummy"
 	go s.acceptClients()
-	s.addFilesToSubject(*directory)
+	s.addFilesToSubject(dirEntries)
 	go s.listenForFiles(*directory)
 
 	for {
@@ -104,8 +116,8 @@ func (s *server) listenForFiles(directory string) error{
 	return nil
 }
 
-func (s *server) addFilesToSubject(directory string) {
-	files, err := s.FileListener.ReadDirectory(directory)
+func (s *server) addFilesToSubject(dirEntries []os.DirEntry) {
+	files, err := s.FileListener.ReadDirectory(dirEntries)
 
 	if err != nil {
 		panic(err)
