@@ -9,8 +9,6 @@ import (
 	"testing"
 )
 
-//go:generate mockgen -destination=../mocks/mock_file_listener.go -package=mocks . IFileListener
-//go:generate mockgen -destination=../mocks/mock_dir_entry.go --package=mocks io/fs DirEntry
 
 func TestFileListener_ListenForFiles(t *testing.T) {
 	watcher, err := fsnotify.NewWatcher()

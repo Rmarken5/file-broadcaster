@@ -13,9 +13,11 @@ import (
 	"time"
 )
 
+//go:generate mockgen -destination=../mocks/mock_net_listener.go -package=mocks net Listener
+
 type server struct {
-	FileListener file_listener.FileListener
-	FileSubject  observer.FileBroadcastSubject
+	FileListener file_listener.IFileListener
+	FileSubject  observer.Subject
 }
  var directory = flag.String("directory", "", "Directory to listen to files on.")
 func main() {
@@ -32,17 +34,25 @@ func main() {
 		panic(err)
 	}
 	s := server{
-		FileListener: file_listener.FileListener{
+		FileListener: &file_listener.FileListener{
 			Watcher: watcher,
 		},
-		FileSubject: observer.FileBroadcastSubject{
+		FileSubject: &observer.FileBroadcastSubject{
 			Files:     []string{},
 			Observers: make(map[string]observer.Observer, 0),
 		},
 	}
 	done := make(chan bool)
 	//directory := "/home/ryanm/programming/go/file-broadcaster/dummy"
-	go s.acceptClients()
+
+	l, err := net.Listen("tcp4", ":8000")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer l.Close()
+
+	go s.acceptClients(l)
 	s.addFilesToSubject(dirEntries)
 	go s.listenForFiles(*directory)
 
@@ -55,23 +65,16 @@ func main() {
 
 }
 
-func (s *server) acceptClients() {
-	l, err := net.Listen("tcp4", ":8000")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer l.Close()
+func (s *server) acceptClients(listener net.Listener) {
 	rand.Seed(time.Now().Unix())
 
 	for {
-		c, err := l.Accept()
+		c, err := listener.Accept()
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
 		go s.handleConnection(c)
-
 	}
 }
 
@@ -102,9 +105,9 @@ func (s *server) listenForFiles(directory string) error{
 				fileParts := strings.Split(event.Name, "/")
 				fileName := fileParts[len(fileParts)-1]
 				if event.Op.String() == "CREATE" {
-					s.FileSubject.AddFiles(fileName)
+					s.FileSubject.AddFile(fileName)
 				} else if event.Op.String() == "REMOVE" {
-					s.FileSubject.RemoveFiles(fileName)
+					s.FileSubject.RemoveFile(fileName)
 				}
 			}
 		}
@@ -116,5 +119,5 @@ func (s *server) listenForFiles(directory string) error{
 func (s *server) addFilesToSubject(dirEntries []os.DirEntry) {
 	files := s.FileListener.ReadDirectory(dirEntries)
 
-	s.FileSubject.Files = append(s.FileSubject.Files, files...)
+	s.FileSubject.SetFiles(append(s.FileSubject.GetFiles(), files...))
 }

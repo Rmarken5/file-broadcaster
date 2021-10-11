@@ -7,7 +7,7 @@ type FileBroadcastSubject struct {
 	Observers map[string]Observer
 }
 
-func (f *FileBroadcastSubject) AddFiles(fileName string) {
+func (f *FileBroadcastSubject) AddFile(fileName string) {
 	var isExists bool
 	for _, file := range f.Files {
 		if fileName == file {
@@ -19,7 +19,7 @@ func (f *FileBroadcastSubject) AddFiles(fileName string) {
 		f.NotifyAll()
 	}
 }
-func (f *FileBroadcastSubject) RemoveFiles(fileName string) {
+func (f *FileBroadcastSubject) RemoveFile(fileName string) {
 	newFileArr := f.Files
 	for i, file := range f.Files {
 		if fileName == file {
@@ -48,4 +48,12 @@ func (f *FileBroadcastSubject) NotifyAll() {
 			f.Unsubscribe(obs.GetIdentifier())
 		}
 	}
+}
+
+func (f *FileBroadcastSubject) SetFiles(files []string)  {
+	f.Files = files
+}
+
+func (f *FileBroadcastSubject) GetFiles() []string {
+	return f.Files
 }

@@ -4,12 +4,11 @@ import (
 	"github.com/fsnotify/fsnotify"
 	"os"
 )
+//go:generate mockgen -destination=../mocks/mock_dir_entry.go --package=mocks io/fs DirEntry
 
 func (f *FileListener) ListenForFiles(directory string) chan fsnotify.Event {
-
 	f.Watcher.Add(directory)
 	return f.Watcher.Events
-
 }
 
 func (f *FileListener) ReadDirectory(dirEntries []os.DirEntry) []string {

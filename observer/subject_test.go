@@ -8,7 +8,6 @@ import (
 	"testing"
 )
 
-//go:generate mockgen -destination=../mocks/mock_observer.go -package=mocks . Observer
 
 func TestFileBroadcastSubject_AddFiles(t *testing.T) {
 
@@ -17,7 +16,7 @@ func TestFileBroadcastSubject_AddFiles(t *testing.T) {
 		Observers: map[string]Observer{},
 	}
 
-	fileBroadcastSubject.AddFiles("filename.txt")
+	fileBroadcastSubject.AddFile("filename.txt")
 	fileName := fileBroadcastSubject.Files[0]
 	assert.EqualValues(t, "filename.txt", fileName)
 
@@ -29,7 +28,7 @@ func TestFileBroadcastSubject_AddFilesFileExists(t *testing.T) {
 		Observers: map[string]Observer{},
 	}
 
-	fileBroadcastSubject.AddFiles("filename.txt")
+	fileBroadcastSubject.AddFile("filename.txt")
 	fileName := fileBroadcastSubject.Files[0]
 	assert.EqualValues(t, "filename.txt", fileName)
 	assert.EqualValues(t, len(fileBroadcastSubject.Files), 1)
@@ -40,7 +39,7 @@ func TestFileBroadcastSubject_RemoveFiles(t *testing.T) {
 		Files:     []string{"file1", "file2"},
 		Observers: map[string]Observer{},
 	}
-	fileBroadcastSubject.RemoveFiles("file2")
+	fileBroadcastSubject.RemoveFile("file2")
 	fileName := fileBroadcastSubject.Files[0]
 	assert.EqualValues(t, "file1", fileName)
 	assert.EqualValues(t, len(fileBroadcastSubject.Files), 1)

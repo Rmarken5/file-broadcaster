@@ -36,12 +36,11 @@ func (m *MockIFileListener) EXPECT() *MockIFileListenerMockRecorder {
 }
 
 // ListenForFiles mocks base method.
-func (m *MockIFileListener) ListenForFiles(arg0 string) (chan fsnotify.Event, error) {
+func (m *MockIFileListener) ListenForFiles(arg0 string) chan fsnotify.Event {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListenForFiles", arg0)
 	ret0, _ := ret[0].(chan fsnotify.Event)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	return ret0
 }
 
 // ListenForFiles indicates an expected call of ListenForFiles.
@@ -51,12 +50,11 @@ func (mr *MockIFileListenerMockRecorder) ListenForFiles(arg0 interface{}) *gomoc
 }
 
 // ReadDirectory mocks base method.
-func (m *MockIFileListener) ReadDirectory(arg0 []fs.DirEntry) ([]string, error) {
+func (m *MockIFileListener) ReadDirectory(arg0 []fs.DirEntry) []string {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ReadDirectory", arg0)
 	ret0, _ := ret[0].([]string)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	return ret0
 }
 
 // ReadDirectory indicates an expected call of ReadDirectory.
