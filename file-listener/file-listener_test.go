@@ -1,7 +1,6 @@
 package file_listener
 
 import (
-	"github.com/Rmarken5/file-broadcaster/mocks"
 	"github.com/fsnotify/fsnotify"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -34,7 +33,7 @@ func TestFileListener_ReadDirectory(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer watcher.Close()
-	entry := mocks.NewMockDirEntry(ctr)
+	entry := NewMockDirEntry(ctr)
 	entry.EXPECT().IsDir().AnyTimes().Return(false)
 	entry.EXPECT().Name().AnyTimes().Return("Derp")
 
@@ -56,7 +55,7 @@ func TestFileListener_ReadDirectoryIsDir(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer watcher.Close()
-	entry := mocks.NewMockDirEntry(ctr)
+	entry := NewMockDirEntry(ctr)
 	entry.EXPECT().IsDir().AnyTimes().Return(true)
 	entry.EXPECT().Name().AnyTimes().Return("Derp")
 

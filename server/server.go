@@ -13,7 +13,11 @@ import (
 	"time"
 )
 
-//go:generate mockgen -destination=../mocks/mock_net_listener.go -package=mocks net Listener
+//go:generate mockgen -destination=./mock_net_listener_test.go -package=main net Listener
+//go:generate mockgen -destination=./mock_net_addr_test.go -package=main net Addr
+//go:generate mockgen -destination=./mock_conn_test.go --package=main net Conn
+//go:generate mockgen -destination=./mock_dir_entry_test.go --package=main github.com/Rmarken5/file-broadcaster/file-listener IFileListener
+//go:generate mockgen -destination=./mock_subject_test.go -package=main github.com/Rmarken5/file-broadcaster/observer Subject
 
 type server struct {
 	FileListener file_listener.IFileListener
@@ -98,18 +102,7 @@ func (s *server) listenForFiles(directory string) error{
 
 	go func() {
 		for {
-			select {
-			// watch for events
-			case event := <- fileListener:
-				fmt.Printf("EVENT! %+v\n", event)
-				fileParts := strings.Split(event.Name, "/")
-				fileName := fileParts[len(fileParts)-1]
-				if event.Op.String() == "CREATE" {
-					s.FileSubject.AddFile(fileName)
-				} else if event.Op.String() == "REMOVE" {
-					s.FileSubject.RemoveFile(fileName)
-				}
-			}
+			s.evaluateEvent(fileListener)
 		}
 	}()
 	<-done
@@ -121,3 +114,18 @@ func (s *server) addFilesToSubject(dirEntries []os.DirEntry) {
 
 	s.FileSubject.SetFiles(append(s.FileSubject.GetFiles(), files...))
 }
+
+ func (s *server) evaluateEvent(listenerChannel <- chan fsnotify.Event ) {
+	 select {
+	 // watch for events
+	 case event := <- listenerChannel:
+		 fmt.Printf("EVENT! %+v\n", event)
+		 fileParts := strings.Split(event.Name, "/")
+		 fileName := fileParts[len(fileParts)-1]
+		 if event.Op.String() == "CREATE" {
+			 s.FileSubject.AddFile(fileName)
+		 } else if event.Op.String() == "REMOVE" {
+			 s.FileSubject.RemoveFile(fileName)
+		 }
+	 }
+ }

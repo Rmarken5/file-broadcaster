@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-//go:generate mockgen -destination=../mocks/mock_file_listener.go -package=mocks . IFileListener
+//go:generate mockgen -destination=./mock_file_listener_test.go -package=file_listener . IFileListener
 
 
 type IFileListener interface {

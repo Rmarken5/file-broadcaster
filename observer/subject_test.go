@@ -2,7 +2,6 @@ package observer
 
 import (
 	"errors"
-	"github.com/Rmarken5/file-broadcaster/mocks"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -48,7 +47,7 @@ func TestFileBroadcastSubject_RemoveFiles(t *testing.T) {
 func TestFileBroadcastSubject_Subscribe(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockObs := mocks.NewMockObserver(ctrl)
+	mockObs := NewMockObserver(ctrl)
 	mockObs.EXPECT().GetIdentifier().AnyTimes().Return("obs1")
 	mockObs.EXPECT().OnUpdate(gomock.Any())
 	fileBroadcastSubject := FileBroadcastSubject{
@@ -66,7 +65,7 @@ func TestFileBroadcastSubject_Subscribe(t *testing.T) {
 func TestFileBroadcastSubject_Unsubscribe(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockObs := mocks.NewMockObserver(ctrl)
+	mockObs := NewMockObserver(ctrl)
 	fileBroadcastSubject := FileBroadcastSubject{
 		Files:     []string{},
 		Observers: map[string]Observer{"obs1":mockObs},
@@ -81,7 +80,7 @@ func TestFileBroadcastSubject_Unsubscribe(t *testing.T) {
 func TestFileBroadcastSubject_NotifyAll(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockObs := mocks.NewMockObserver(ctrl)
+	mockObs := NewMockObserver(ctrl)
 	mockObs.EXPECT().OnUpdate([]string{"file1"}).Times(1)
 	fileBroadcastSubject := FileBroadcastSubject{
 		Files:     []string{"file1"},
@@ -93,7 +92,7 @@ func TestFileBroadcastSubject_NotifyAll(t *testing.T) {
 func TestFileBroadcastSubject_NotifyAllUnsub(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockObs := mocks.NewMockObserver(ctrl)
+	mockObs := NewMockObserver(ctrl)
 	mockObs.EXPECT().GetIdentifier().AnyTimes().Return("obs1")
 	mockObs.EXPECT().OnUpdate( []string{"file1"}).Return(errors.New("cannot write"))
 	fileBroadcastSubject := FileBroadcastSubject{
@@ -104,5 +103,18 @@ func TestFileBroadcastSubject_NotifyAllUnsub(t *testing.T) {
 	//Test that observer was unsubscribed from
 	assert.Len(t, fileBroadcastSubject.Observers, 0)
 }
+
+func TestFileBroadcastSubject_GetSetFiles(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mockObs := NewMockObserver(ctrl)
+	fileBroadcastSubject := FileBroadcastSubject{
+		Files:     []string{},
+		Observers: map[string]Observer{"obs1":mockObs},
+	}
+	fileBroadcastSubject.SetFiles([]string{"file1"})
+	assert.Contains(t, fileBroadcastSubject.GetFiles(), "file1")
+}
+
 
 

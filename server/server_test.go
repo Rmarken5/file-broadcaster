@@ -1,26 +1,57 @@
 package main
 
 import (
-	"github.com/Rmarken5/file-broadcaster/mocks"
+	"github.com/fsnotify/fsnotify"
 	"github.com/golang/mock/gomock"
 	"testing"
 )
 
 
-func Test_AcceptClients(t *testing.T) {
+/*func Test_AcceptClients(t *testing.T) {
 
 	ctr := gomock.NewController(t)
-	netConn := mocks.NewMockConn(ctr)
-	netConn.EXPECT().RemoteAddr().AnyTimes().Return("8000")
-	netListener := mocks.NewMockListener(ctr)
+	netConn := NewMockConn(ctr)
+	addr := NewMockAddr(ctr)
+	netConn.EXPECT().RemoteAddr().AnyTimes().Return(addr)
+	netListener := NewMockListener(ctr)
 	netListener.EXPECT().Close().Return(nil)
 	netListener.EXPECT().Accept().AnyTimes().Return(netConn,nil)
-	fileListener := mocks.NewMockIFileListener(ctr)
-	subject := mocks.NewMockSubject(ctr)
+	fileListener := NewMockIFileListener(ctr)
+	subject := NewMockSubject(ctr)
 	server := server{
 		FileListener: fileListener,
 		FileSubject: subject,
 	}
 
 	server.acceptClients(netListener)
+}*/
+
+func Test_EvaluateEvent(t *testing.T) {
+	create := fsnotify.Event{
+		Name: "/file1",
+		Op:  1 ,
+	}
+	remove := fsnotify.Event{
+		Name: "/file1",
+		Op:  4 ,
+	}
+	listenerChannel := make(chan fsnotify.Event)
+	ctr := gomock.NewController(t)
+	fileListener := NewMockIFileListener(ctr)
+	subject := NewMockSubject(ctr)
+	subject.EXPECT().AddFile("file1").Times(1)
+	subject.EXPECT().RemoveFile("file1").Times(1)
+
+	server := server{
+		FileListener: fileListener,
+		FileSubject: subject,
+	}
+
+	go server.evaluateEvent(listenerChannel)
+	listenerChannel <- create
+	go server.evaluateEvent(listenerChannel)
+	listenerChannel <- remove
+
+
 }
+

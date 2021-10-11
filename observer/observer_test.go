@@ -2,7 +2,6 @@ package observer
 
 import (
 	"fmt"
-	"github.com/Rmarken5/file-broadcaster/mocks"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -11,7 +10,7 @@ func TestConnectionData_OnUpdate_Nil(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	m := mocks.NewMockConn(ctrl)
+	m := NewMockConn(ctrl)
 	m.EXPECT().Write(gomock.Any()).Return(11, nil)
 
 	conData := ConnectionData{
@@ -29,7 +28,7 @@ func TestConnectionData_OnUpdate_NotNil(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	m := mocks.NewMockConn(ctrl)
+	m := NewMockConn(ctrl)
 	m.EXPECT().Write(gomock.Any()).Return(0, fmt.Errorf("SomeError"))
 
 	conData := ConnectionData{

@@ -5,7 +5,7 @@ import (
 	"net"
 	"strings"
 )
-//go:generate mockgen -destination=../mocks/mock_conn.go --package=mocks net Conn
+//go:generate mockgen -destination=./mock_conn_test.go --package=observer net Conn
 
 type ConnectionData struct {
 	Address string
