@@ -6,13 +6,15 @@ package observer
 
 type Observer interface {
 	GetIdentifier() string
-	OnUpdate([]string) error
+	LoadAllFiles(files []string) error
+	AddFile(files string) error
 }
 
 type Subscriber interface {
 	Subscribe(Observer)
 	Unsubscribe(string)
-	NotifyAll()
+	NotifyAllWithFiles(files []string)
+	NotifyAllWithFile(file string)
 }
 
 type Subject interface {
@@ -20,7 +22,7 @@ type Subject interface {
 	RemoveFile(fileName string)
 	Subscribe(observer Observer)
 	Unsubscribe(key string)
-	NotifyAll()
+	NotifyAllWithFiles(files []string)
 	SetFiles(files []string)
 	GetFiles() []string
 }

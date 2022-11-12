@@ -33,16 +33,28 @@ func (m *MockSubscriber) EXPECT() *MockSubscriberMockRecorder {
 	return m.recorder
 }
 
-// NotifyAll mocks base method.
-func (m *MockSubscriber) NotifyAll() {
+// NotifyAllWithFile mocks base method.
+func (m *MockSubscriber) NotifyAllWithFile(arg0 string) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "NotifyAll")
+	m.ctrl.Call(m, "NotifyAllWithFile", arg0)
 }
 
-// NotifyAll indicates an expected call of NotifyAll.
-func (mr *MockSubscriberMockRecorder) NotifyAll() *gomock.Call {
+// NotifyAllWithFile indicates an expected call of NotifyAllWithFile.
+func (mr *MockSubscriberMockRecorder) NotifyAllWithFile(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NotifyAll", reflect.TypeOf((*MockSubscriber)(nil).NotifyAll))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NotifyAllWithFile", reflect.TypeOf((*MockSubscriber)(nil).NotifyAllWithFile), arg0)
+}
+
+// NotifyAllWithFiles mocks base method.
+func (m *MockSubscriber) NotifyAllWithFiles(arg0 []string) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "NotifyAllWithFiles", arg0)
+}
+
+// NotifyAllWithFiles indicates an expected call of NotifyAllWithFiles.
+func (mr *MockSubscriberMockRecorder) NotifyAllWithFiles(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NotifyAllWithFiles", reflect.TypeOf((*MockSubscriber)(nil).NotifyAllWithFiles), arg0)
 }
 
 // Subscribe mocks base method.

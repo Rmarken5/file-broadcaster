@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
+
 func TestConnectionData_OnUpdate_Nil(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -18,7 +19,7 @@ func TestConnectionData_OnUpdate_Nil(t *testing.T) {
 		m,
 	}
 
-	err := conData.OnUpdate([]string{"file-1.txt"})
+	err := conData.LoadAllFiles([]string{"file-1.txt"})
 	if err != nil {
 		t.FailNow()
 	}
@@ -36,7 +37,7 @@ func TestConnectionData_OnUpdate_NotNil(t *testing.T) {
 		m,
 	}
 
-	err := conData.OnUpdate([]string{"file-1.txt"})
+	err := conData.LoadAllFiles([]string{"file-1.txt"})
 	if err == nil {
 		t.FailNow()
 	}

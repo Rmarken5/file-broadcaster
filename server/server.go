@@ -56,9 +56,8 @@ func main() {
 		return
 	}
 	defer l.Close()
-
-	go s.acceptClients(l)
 	s.addFilesToSubject(dirEntries)
+	go s.acceptClients(l)
 	go s.listenForFiles(*directory)
 
 	for {

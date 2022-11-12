@@ -33,6 +33,20 @@ func (m *MockObserver) EXPECT() *MockObserverMockRecorder {
 	return m.recorder
 }
 
+// AddFile mocks base method.
+func (m *MockObserver) AddFile(arg0 string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddFile", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AddFile indicates an expected call of AddFile.
+func (mr *MockObserverMockRecorder) AddFile(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddFile", reflect.TypeOf((*MockObserver)(nil).AddFile), arg0)
+}
+
 // GetIdentifier mocks base method.
 func (m *MockObserver) GetIdentifier() string {
 	m.ctrl.T.Helper()
@@ -47,16 +61,16 @@ func (mr *MockObserverMockRecorder) GetIdentifier() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetIdentifier", reflect.TypeOf((*MockObserver)(nil).GetIdentifier))
 }
 
-// OnUpdate mocks base method.
-func (m *MockObserver) OnUpdate(arg0 []string) error {
+// LoadAllFiles mocks base method.
+func (m *MockObserver) LoadAllFiles(arg0 []string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "OnUpdate", arg0)
+	ret := m.ctrl.Call(m, "LoadAllFiles", arg0)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// OnUpdate indicates an expected call of OnUpdate.
-func (mr *MockObserverMockRecorder) OnUpdate(arg0 interface{}) *gomock.Call {
+// LoadAllFiles indicates an expected call of LoadAllFiles.
+func (mr *MockObserverMockRecorder) LoadAllFiles(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OnUpdate", reflect.TypeOf((*MockObserver)(nil).OnUpdate), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LoadAllFiles", reflect.TypeOf((*MockObserver)(nil).LoadAllFiles), arg0)
 }

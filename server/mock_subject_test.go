@@ -60,16 +60,16 @@ func (mr *MockSubjectMockRecorder) GetFiles() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFiles", reflect.TypeOf((*MockSubject)(nil).GetFiles))
 }
 
-// NotifyAll mocks base method.
-func (m *MockSubject) NotifyAll() {
+// NotifyAllWithFiles mocks base method.
+func (m *MockSubject) NotifyAllWithFiles(arg0 []string) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "NotifyAll")
+	m.ctrl.Call(m, "NotifyAllWithFiles", arg0)
 }
 
-// NotifyAll indicates an expected call of NotifyAll.
-func (mr *MockSubjectMockRecorder) NotifyAll() *gomock.Call {
+// NotifyAllWithFiles indicates an expected call of NotifyAllWithFiles.
+func (mr *MockSubjectMockRecorder) NotifyAllWithFiles(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NotifyAll", reflect.TypeOf((*MockSubject)(nil).NotifyAll))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NotifyAllWithFiles", reflect.TypeOf((*MockSubject)(nil).NotifyAllWithFiles), arg0)
 }
 
 // RemoveFile mocks base method.
