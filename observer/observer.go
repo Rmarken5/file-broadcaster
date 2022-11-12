@@ -13,7 +13,7 @@ type ConnectionData struct {
 }
 
 func (c *ConnectionData) OnUpdate(files []string) error {
-	fileString := strings.Join(files, ",")
+	fileString := strings.Join(files, ",") + "\n"
 
 	fmt.Println("writing files: ", fileString)
 

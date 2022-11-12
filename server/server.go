@@ -23,7 +23,9 @@ type server struct {
 	FileListener file_listener.IFileListener
 	FileSubject  observer.Subject
 }
- var directory = flag.String("directory", "", "Directory to listen to files on.")
+
+var directory = flag.String("directory", "./files", "Directory to listen to files on.")
+
 func main() {
 
 	flag.Parse()
@@ -47,7 +49,6 @@ func main() {
 		},
 	}
 	done := make(chan bool)
-	//directory := "/home/ryanm/programming/go/file-broadcaster/dummy"
 
 	l, err := net.Listen("tcp4", ":8000")
 	if err != nil {
@@ -89,11 +90,10 @@ func (s *server) handleConnection(c net.Conn) {
 		Conn:    c,
 	}
 	fmt.Println("Addr: ", obs.GetIdentifier())
-	c.Write([]byte("Connection Established.\n"))
 	s.FileSubject.Subscribe(obs)
 }
 
-func (s *server) listenForFiles(directory string) error{
+func (s *server) listenForFiles(directory string) error {
 
 	fileListener := s.FileListener.ListenForFiles(directory)
 	fmt.Println("listening for files.")
@@ -115,17 +115,17 @@ func (s *server) addFilesToSubject(dirEntries []os.DirEntry) {
 	s.FileSubject.SetFiles(append(s.FileSubject.GetFiles(), files...))
 }
 
- func (s *server) evaluateEvent(listenerChannel <- chan fsnotify.Event ) {
-	 select {
-	 // watch for events
-	 case event := <- listenerChannel:
-		 fmt.Printf("EVENT! %+v\n", event)
-		 fileParts := strings.Split(event.Name, "/")
-		 fileName := fileParts[len(fileParts)-1]
-		 if event.Op.String() == "CREATE" {
-			 s.FileSubject.AddFile(fileName)
-		 } else if event.Op.String() == "REMOVE" {
-			 s.FileSubject.RemoveFile(fileName)
-		 }
-	 }
- }
+func (s *server) evaluateEvent(listenerChannel <-chan fsnotify.Event) {
+	select {
+	// watch for events
+	case event := <-listenerChannel:
+		fmt.Printf("EVENT! %+v\n", event)
+		fileParts := strings.Split(event.Name, "/")
+		fileName := fileParts[len(fileParts)-1]
+		if event.Op.String() == "CREATE" {
+			s.FileSubject.AddFile(fileName)
+		} else if event.Op.String() == "REMOVE" {
+			s.FileSubject.RemoveFile(fileName)
+		}
+	}
+}
